@@ -40,6 +40,7 @@ if (isset($_GET['service'])) {
                 $perPage = getParam($_GET, 'perPage', false, 3);;
                 $usersCtrl->getUsers($searchParams, $page, $perPage);
             }catch (Exception $exception){
+                var_dump($exception);
                 $ctrl->errorParameters($exception->getMessage());
             }
 

@@ -4,16 +4,18 @@ require_once 'Model.php';
 
 class Manager extends Model
 {
-    private $tableName;
+    private string $tableName;
     private $entity;
 
-    public function __construct($tableName, $entity)
+    public function __construct(string $tableName, $entity, $lowerTableName = TRUE)
     {
         $this->tableName = $tableName;
+        if($lowerTableName)
+            $this->tableName = strtolower($this->tableName);
         $this->entity = $entity;
     }
 
-    public function create(array $array)
+    public function create(array $array): ?Entity
     {
         $val = implode(",", array_fill(0, count($array), '?'));
         $sql = "INSERT INTO " . $this->tableName . " (" . implode(",", array_keys($array)) . ") VALUES (" . $val . ")";
@@ -26,7 +28,7 @@ class Manager extends Model
             return null;
     }
 
-    public function update($id, $params)
+    public function update($id, $params): void
     {
         $sql = "UPDATE " . $this->tableName . " SET ";
         foreach ($params as $key => $val){
@@ -44,7 +46,7 @@ class Manager extends Model
         $this->execRequest($sql, array($id));
     }
 
-    public function getByID($id)
+    public function getByID($id): ?Entity
     {
         $sql = "SELECT * FROM " . $this->tableName . " WHERE id = ?";
         $dbData = $this->execRequest($sql, array($id));
@@ -57,7 +59,7 @@ class Manager extends Model
         }
     }
 
-    public function get(array $params, array $options = [], bool $asArray = true)
+    public function get(array $params, array $options = [], bool $asArray = true): array
     {
         $sql = "SELECT * FROM " . $this->tableName . " WHERE ";
         foreach ($params as $key => $val){
@@ -82,7 +84,7 @@ class Manager extends Model
         return $this->execGetRequest($sql, $asArray);
     }
 
-    public function countAllRow(){
+    public function countAllRow(): int{
         $sql = "SELECT count(*) FROM " . $this->tableName . " ";
         $dbData = $this->execRequest($sql);
         return $dbData->fetch()[0];
