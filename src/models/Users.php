@@ -1,6 +1,6 @@
 <?php
 
-require_once 'Entity.php';
+require_once './framework/Entity.php';
 
 class Users extends Entity {
 

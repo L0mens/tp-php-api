@@ -23,4 +23,8 @@ class JSON{
         echo $json;
     }
 
+    public static function sendNoContent204(){
+        http_response_code(204);
+    }
+
 }

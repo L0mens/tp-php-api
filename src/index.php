@@ -12,20 +12,37 @@ $usersCtrl = new UsersController();
 /**
  * @throws Exception
  */
-function getParam(array $array, string $paramName, bool $canBeEmpty=true)
+function getParam(array $array, string $paramName, bool $canBeEmpty=true, $defaultValueIfAbsent=null)
 {
     if (isset($array[$paramName])) {
         if(!$canBeEmpty && empty($array[$paramName]))
             throw new Exception("Paramètre '$paramName' vide");
         return $array[$paramName];
-    } else
-        throw new Exception("Paramètre '$paramName' absent");
+    }
+    else
+        if(!isset($defaultValueIfAbsent))
+            throw new Exception("Paramètre '$paramName' absent");
+        else
+            return $defaultValueIfAbsent;
 }
 
 if (isset($_GET['service'])) {
     if ($_GET['service'] == "users") {
         if($_SERVER['REQUEST_METHOD'] == 'GET'){
-            $usersCtrl->getUsers();
+            try{
+                $searchParams = [
+                    "username" => getParam($_GET, 'username', false, ""),
+                    "email" => getParam($_GET, 'email', false, "")
+                ];
+                // Remove empty keys
+                $searchParams = array_filter($searchParams);
+                $page = getParam($_GET, 'page', false, 1);;
+                $perPage = getParam($_GET, 'perPage', false, 3);;
+                $usersCtrl->getUsers($searchParams, $page, $perPage);
+            }catch (Exception $exception){
+                $ctrl->errorParameters($exception->getMessage());
+            }
+
         }
         else if ($_SERVER['REQUEST_METHOD'] == 'POST'){
             $usersdata = [
@@ -35,24 +52,34 @@ if (isset($_GET['service'])) {
             $usersCtrl->createUser($usersdata);
         }
         else if ($_SERVER['REQUEST_METHOD'] == 'PUT'){
-
+            //Retrieve PUT DATA and send them to $post_vars
+            parse_str(file_get_contents("php://input"),$post_vars);
+            try{
+                $idUser = getParam($_GET, 'iduser', false);
+                $searchParams = [
+                    "username" => getParam($post_vars, 'username', true, ""),
+                    "email" => getParam($post_vars, 'email', true, "")
+                ];
+                $usersCtrl->updateUsers($idUser, $searchParams);
+            }
+            catch (Exception $exception){
+                $ctrl->errorParameters($exception->getMessage());
+            }
         }
         else if ($_SERVER['REQUEST_METHOD'] == 'DELETE'){
+            try{
+                $idUser = getParam($_GET, 'iduser', false);
+                $usersCtrl->deleteUsers($idUser);
+            }
+            catch (Exception $exception){
+                $ctrl->errorParameters($exception->getMessage());
+            }
 
         }
         else{
             $ctrl->noRoutesFound();
         }
 
-    } else if ($_GET['service'] == "edit-animal") {
-       
-
-    } else if ($_GET['service'] == "del-animal") {
-        
-    } else if ($_GET['service'] == "search") {
-        
-    } else if ($_GET['service'] == "add-proprietaire") {
-        
     } else {
         $ctrl->noRoutesFound();
     }

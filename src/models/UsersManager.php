@@ -1,6 +1,6 @@
 <?php
 
-require_once 'Manager.php';
+require_once './framework/Manager.php';
 
 class UsersManager extends Manager {
 

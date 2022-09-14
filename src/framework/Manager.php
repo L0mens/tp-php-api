@@ -4,7 +4,6 @@ require_once 'Model.php';
 
 class Manager extends Model
 {
-
     private $tableName;
     private $entity;
 
@@ -27,19 +26,26 @@ class Manager extends Model
             return null;
     }
 
-    public function update($entity)
+    public function update($id, $params)
     {
+        $sql = "UPDATE " . $this->tableName . " SET ";
+        foreach ($params as $key => $val){
+            $sql .= $key . " = ? , " ;
+        }
+        $sql = substr($sql, 0, -3);
+        $sql .= " WHERE id = ?";
 
+        $this->execRequest($sql, array_merge(array_values($params), array($id)));
     }
 
-    public function delete($entity)
+    public function delete($id) : void
     {
-
+        $sql = "DELETE FROM " . $this->tableName . " WHERE id = ?";
+        $this->execRequest($sql, array($id));
     }
 
     public function getByID($id)
     {
-        var_dump($id);
         $sql = "SELECT * FROM " . $this->tableName . " WHERE id = ?";
         $dbData = $this->execRequest($sql, array($id));
         if ($dbData->rowCount() > 0) {
@@ -51,16 +57,39 @@ class Manager extends Model
         }
     }
 
-    public function get($params)
+    public function get(array $params, array $options = [], bool $asArray = true)
     {
-        $val = implode(",", array_fill(0, count($params), '?'));
-        $sql = "SELECT * FROM " . $this->tableName . " (" . implode(",", array_keys($params)) . ") VALUES (" . $val . ")";
+        $sql = "SELECT * FROM " . $this->tableName . " WHERE ";
+        foreach ($params as $key => $val){
+            $sql .= $key. " = ? AND ";
+        }
+        $sql = substr($sql, 0, -4);
+        if(!empty($options)){
+            if(isset($options['page'], $options['perPage']))
+                $sql .= "LIMIT ".$options['perPage']*($options['page']-1).", ". ($options['perPage']);
+        }
+        return $this->execGetRequest($sql, $asArray, array_values($params));
     }
 
-    public function getAll(bool $asArray = true)
+    public function getAll(array $options= [], bool $asArray = true): array
     {
         $sql = "SELECT * FROM " . $this->tableName . " ";
+        if(!empty($options)){
+            if(isset($options['page'], $options['perPage']))
+                $sql .= "LIMIT ".$options['perPage']*($options['page']-1).", ". ($options['perPage']);
+        }
+
+        return $this->execGetRequest($sql, $asArray);
+    }
+
+    public function countAllRow(){
+        $sql = "SELECT count(*) FROM " . $this->tableName . " ";
         $dbData = $this->execRequest($sql);
+        return $dbData->fetch()[0];
+    }
+
+    private function execGetRequest(string $sql, bool $asArray = true, $params = []): array{
+        $dbData = $this->execRequest($sql, $params);
         $all_users = [];
         while ($user = $dbData->fetch()) {
 
