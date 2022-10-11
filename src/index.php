@@ -2,7 +2,6 @@
 declare(strict_types=1);
 require_once './controllers/MainController.php';
 require_once './controllers/UsersController.php';
-
 require_once './models/Users.php';
 
 
@@ -20,10 +19,14 @@ function getParam(array $array, string $paramName, bool $canBeEmpty=true, $defau
         return $array[$paramName];
     }
     else
+    {
+
         if(!isset($defaultValueIfAbsent))
             throw new Exception("Paramètre '$paramName' absent");
         else
             return $defaultValueIfAbsent;
+    }
+
 }
 
 if (isset($_GET['service'])) {
@@ -36,11 +39,21 @@ if (isset($_GET['service'])) {
                 ];
                 // Remove empty keys
                 $searchParams = array_filter($searchParams);
-                $page = getParam($_GET, 'page', false, 1);;
-                $perPage = getParam($_GET, 'perPage', false, 3);;
+                $page = getParam($_GET, 'page', false, 1);
+                $perPage = getParam($_GET, 'perPage', false, 3);
+                if(is_numeric($page))
+                    $page = intval($page);
+                else
+                    throw new TypeError("Le paramètre page n'est pas un entier");
+                if(is_numeric($perPage))
+                    $perPage = intval($perPage);
+                else
+                    throw new TypeError("Le paramètre perPage n'est pas un entier");
                 $usersCtrl->getUsers($searchParams, $page, $perPage);
             }catch (Exception $exception){
-                var_dump($exception);
+                $ctrl->errorParameters($exception->getMessage());
+            }
+            catch (Error $exception){
                 $ctrl->errorParameters($exception->getMessage());
             }
 
@@ -58,8 +71,8 @@ if (isset($_GET['service'])) {
             try{
                 $idUser = getParam($_GET, 'iduser', false);
                 $searchParams = [
-                    "username" => getParam($post_vars, 'username', true, ""),
-                    "email" => getParam($post_vars, 'email', true, "")
+                    "username" => getParam($post_vars, 'username', false, ""),
+                    "email" => getParam($post_vars, 'email', false, "")
                 ];
                 $usersCtrl->updateUsers($idUser, $searchParams);
             }
@@ -87,5 +100,4 @@ if (isset($_GET['service'])) {
 } else {
     $ctrl->noRoutesFound();
 }
-
 

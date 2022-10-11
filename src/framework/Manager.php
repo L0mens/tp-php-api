@@ -4,7 +4,7 @@ require_once 'Model.php';
 
 class Manager extends Model
 {
-    private string $tableName;
+    private $tableName;
     private $entity;
 
     public function __construct(string $tableName, $entity, $lowerTableName = TRUE)
@@ -30,13 +30,15 @@ class Manager extends Model
 
     public function update($id, $params): void
     {
+        $params = array_filter($params);
         $sql = "UPDATE " . $this->tableName . " SET ";
         foreach ($params as $key => $val){
-            $sql .= $key . " = ? , " ;
+            if(!empty($val))
+                $sql .= $key . " = ? , " ;
         }
-        $sql = substr($sql, 0, -3);
+        if (substr($sql, -3) == ' , ')
+            $sql = substr($sql, 0, -3);
         $sql .= " WHERE id = ?";
-
         $this->execRequest($sql, array_merge(array_values($params), array($id)));
     }
 
