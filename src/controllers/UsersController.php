@@ -25,7 +25,6 @@ class UsersController
                 "created" => $userCreated->getCreated()
             ]), 201);
         }catch (PDOException $PDOException){
-            var_dump($PDOException);
             JSON::sendData(array('error' => "L'utilisateur ".$usersData["username"]." existe déjà" ), 400);
         }
 

@@ -15,7 +15,7 @@ class Manager extends Model
         $this->entity = $entity;
     }
 
-    public function create(array $array): ?Entity
+    public function create(array $array): ?int
     {
         $val = implode(",", array_fill(0, count($array), '?'));
         $sql = "INSERT INTO " . $this->tableName . " (" . implode(",", array_keys($array)) . ") VALUES (" . $val . ")";
