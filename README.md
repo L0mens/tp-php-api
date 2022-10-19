@@ -1,5 +1,15 @@
 # tp-php-api
 
+## Introduction 
+
+Nous allons découvrir une base de code qui nous servira d'API (application programming interface). Le but sera de voir comment concevoir les bases et les exploiter. Il restera évidemment plein de points que nous n'aborderont pas ici tels que :
+
+- Authentification
+- Framework 
+- Quotas
+- Gateway
+- ...
+
 ## Partie 1 : Installation & Exploration
 
 Pour ce TP, nous allons partir d'une base de code existant. Vous pouvez le télécharger grâce à git.
@@ -38,7 +48,7 @@ Dans votre client REST, créez une collection que vous nommerez comme vous le so
 
 Ajoutez votre première requête ! Celle-ci aura pour but de récupérer tous les utilisateur. Donnez lui un nom qui explicite ce but.
 
-L'url est celle que vous avez testé plus haut ;). Etant une simple requête GET, celle-ci ne demande pas de paramètrage particulier !
+L'URL est celle que vous avez testé plus haut ;). Etant une simple requête GET, celle-ci ne demande pas de paramètrage particulier !
 
 ### Create one User
 
@@ -112,13 +122,13 @@ direction RL
 
 ```
 
-Les Getters/Setters ont été omis ainsi que les infos liés à Entite et Users
+Les Getters/Setters ont été omis ainsi que les infos liés à Entite, Manager et Users
 
 Il nous faudra ensuite créer une table game dans notre base de donnée avec les informations relative à son entité.
 
-L'aggrégation se représentera sous une table user_game qui aura pour clé étrangères l'id d'un Game et l'id d'un User. Je vous recommande d'ajouter un id_user_game en tant que clé primaire.
+L'agrégation se représentera sous une table user_game qui aura pour clé étrangères l'id d'un Game et l'id d'un User. Je vous recommande d'ajouter un id_user_game en tant que clé primaire.
 
-Nous somme prêts à avancer !
+Nous sommes prêts à avancer !
 
 ### Réussir à créer notre Game
 
@@ -132,20 +142,26 @@ Voici une liste d'étape pour vous guider !
 4. Gérer les erreurs potentielles via des Exceptions
 5. Retourner une réponse JSON
 
-N'hésitez pas à demander de l'aide à votre enseignant si quelque chose vous semble obscure. Les ligne sont volontaire très générales car c'est un process standard que vous verez avec le MVC plus en détail dans le S4.
+N'hésitez pas à demander de l'aide à votre enseignant si quelque chose vous semble obscure. Les lignes sont volontairement très générales, car c'est un process standard que vous verez avec le MVC plus en détail dans le S4.
 
-Si tout va bien et que votre ressource est enfin créé en utilisant l'url et votre outil de gestion API vu en partie 1... Et bien félicitation !
+Si tout va bien et que votre ressource est enfin créée en utilisant l'URL et votre outil de gestion API vu en partie 1... Et bien félicitation !
 
-Toutes les routes du CRUD (Create Read Update Delete) ne devrait pas vous poser de soucis. Je vous invite au moins à faire la Read pour vous permettre de visionner vos Games ! Mais pour la suite, je veux que l'on se penche sur un endpoint (point de terminaison ou bien url) que l'on à pas encore vu !
+Toutes les routes du CRUD (Create Read Update Delete) ne devrait pas vous poser de soucis. Je vous invite au moins à faire la Read pour vous permettre de visionner vos Games !
 
-### Lier un Users et un Game
+## Partie Bonus : Lier un Users et un Game
 
-Actuellement, le seul lien actif est une table vide, avec un liste vide en PHP. Il est temps de remédier à cela !
+Actuellement, le seul lien actif est une table vide, avec une liste vide en PHP. Il est temps de remédier à cela !
 
 Plusieurs possibilités au niveau de l'URL. Actuellement, nous travaillons avec une variable service (qui peut prendre comme valeur "users" ou bien "game").
 
 Nous pouvons ajouter un troisième choix : "users_game", ce qui serait simple et ne change pas notre structure de communication.
 
-Nous pouvons aussi ajouter une nouvelle variable du genre ss_service="users". Cela correspondrait aux Users pour un Game donné (et donc avec aussi un champs id_game).
+Nous pouvons aussi ajouter une nouvelle variable du genre ss_service="users". Cela correspondrait aux Users pour un Game donné (et donc avec aussi un champ id_game).
 
-Vous êtes libre de votre choix de conception. L'objectif est que dans votre index.php, vous savez que vous voulez ajouter (ou supprimer) l'id_user 5 au id_game 3 par exemple ! 
+Vous êtes libre de votre choix de conception. L'objectif est que dans votre index.php, vous savez que vous voulez ajouter (ou supprimer) l'id_user 5 a l'id_game 3 par exemple ! 
+
+Ensuite, vous avez carte blanche pour gérer la liste de Users dans votre Game ! Bon courage soldat ! 
+
+## Conclusion
+
+Nous avons introduit la notion d'API dans ce TP, cela pourra vous servir comme point de départ pour évoluer dans ce domaine. Aujourd'hui, le CRUD est une tâche standard qui est simplifiée par de nombreux framework.
