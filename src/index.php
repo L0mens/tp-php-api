@@ -31,8 +31,8 @@ function getParam(array $array, string $paramName, bool $canBeEmpty=true, $defau
 
 if (isset($_GET['service'])) {
     if ($_GET['service'] == "users") {
-        if($_SERVER['REQUEST_METHOD'] == 'GET'){
-            try{
+        if ($_SERVER['REQUEST_METHOD'] == 'GET') {
+            try {
                 $searchParams = [
                     "username" => getParam($_GET, 'username', false, ""),
                     "email" => getParam($_GET, 'email', false, "")
@@ -41,59 +41,53 @@ if (isset($_GET['service'])) {
                 $searchParams = array_filter($searchParams);
                 $page = getParam($_GET, 'page', false, 1);
                 $perPage = getParam($_GET, 'perPage', false, 3);
-                if(is_numeric($page))
+                if (is_numeric($page))
                     $page = intval($page);
                 else
                     throw new TypeError("Le paramètre page n'est pas un entier");
-                if(is_numeric($perPage))
+                if (is_numeric($perPage))
                     $perPage = intval($perPage);
                 else
                     throw new TypeError("Le paramètre perPage n'est pas un entier");
                 $usersCtrl->getUsers($searchParams, $page, $perPage);
-            }catch (Exception $exception){
+            } catch (Exception $exception) {
                 $ctrl->errorParameters($exception->getMessage());
-            }
-            catch (Error $exception){
+            } catch (Error $exception) {
                 $ctrl->errorParameters($exception->getMessage());
             }
 
-        }
-        else if ($_SERVER['REQUEST_METHOD'] == 'POST'){
+        } else if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $usersdata = [
                 "username" => $_POST['username'],
                 "email" => $_POST['email'],
             ];
             $usersCtrl->createUser($usersdata);
-        }
-        else if ($_SERVER['REQUEST_METHOD'] == 'PUT'){
+        } else if ($_SERVER['REQUEST_METHOD'] == 'PUT') {
             //Retrieve PUT DATA and send them to $post_vars
-            parse_str(file_get_contents("php://input"),$post_vars);
-            try{
+            parse_str(file_get_contents("php://input"), $post_vars);
+            try {
                 $idUser = getParam($_GET, 'iduser', false);
                 $searchParams = [
                     "username" => getParam($post_vars, 'username', false, ""),
                     "email" => getParam($post_vars, 'email', false, "")
                 ];
                 $usersCtrl->updateUsers($idUser, $searchParams);
-            }
-            catch (Exception $exception){
+            } catch (Exception $exception) {
                 $ctrl->errorParameters($exception->getMessage());
             }
-        }
-        else if ($_SERVER['REQUEST_METHOD'] == 'DELETE'){
-            try{
+        } else if ($_SERVER['REQUEST_METHOD'] == 'DELETE') {
+            try {
                 $idUser = getParam($_GET, 'iduser', false);
                 $usersCtrl->deleteUsers($idUser);
-            }
-            catch (Exception $exception){
+            } catch (Exception $exception) {
                 $ctrl->errorParameters($exception->getMessage());
             }
 
-        }
-        else{
+        } else {
             $ctrl->noRoutesFound();
         }
-
+    } elseif ($_GET['service'] == "ping"){
+        $ctrl->ping();
     } else {
         $ctrl->noRoutesFound();
     }

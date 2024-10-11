@@ -18,6 +18,12 @@ class MainController{
         JSON::sendData(array('error' => $message), 400);
     }
 
+    public function ping(): void
+    {
+        JSON::setHeaders();
+        JSON::sendData(array('ping' => "Contact réussi"), 200);
+    }
+
 
 
 }
